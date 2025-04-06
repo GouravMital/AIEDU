@@ -28,9 +28,6 @@ export const contents = pgTable("contents", {
   materials: json("materials").$type(),
   visualReferences: json("visualReferences").$type(),
   specificInstructions: text("specificInstructions"),
-  videoUrl: text("videoUrl"),
-  errorMessage: text("errorMessage"),
-  aiModel: text("aiModel"),
   createdAt: timestamp("createdAt").defaultNow(),
 });
 

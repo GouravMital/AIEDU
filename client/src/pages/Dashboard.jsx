@@ -11,26 +11,10 @@ export default function Dashboard() {
   const [selectedContent, setSelectedContent] = useState(null);
   
   // Fetch all contents
-  const { data: contents, isLoading, refetch } = useQuery({
+  const { data: contents, isLoading } = useQuery({
     queryKey: ['/api/contents'],
-    staleTime: 10000, // 10 seconds
+    staleTime: 60000, // 1 minute
   });
-  
-  // Refresh content every 5 seconds while "processing" state exists
-  useEffect(() => {
-    let interval;
-    
-    if (contents && contents.some(content => content.status === 'processing')) {
-      interval = setInterval(() => {
-        console.log('Refreshing content list due to processing status');
-        refetch();
-      }, 5000); // Refresh every 5 seconds
-    }
-    
-    return () => {
-      if (interval) clearInterval(interval);
-    };
-  }, [contents, refetch]);
   
   // Calculate stats
   const getStats = () => {
@@ -47,26 +31,12 @@ export default function Dashboard() {
   
   // Select the most recent content for preview
   useEffect(() => {
-    if (contents && contents.length > 0) {
+    if (contents && contents.length > 0 && !selectedContent) {
       // Sort by creation date descending
       const sortedContents = [...contents].sort((a, b) => 
         new Date(b.createdAt) - new Date(a.createdAt)
       );
-      
-      // If no content is selected or the selected content has been updated (status changed)
-      if (!selectedContent || (
-          selectedContent && 
-          contents.find(c => c.id === selectedContent.id && 
-                            (c.status !== selectedContent.status || 
-                             c.videoUrl !== selectedContent.videoUrl))
-        )) {
-        // Find the current content to update
-        const currentContent = contents.find(c => selectedContent && c.id === selectedContent.id);
-        
-        // If we have the current content (it was just updated), use that - otherwise use most recent
-        setSelectedContent(currentContent || sortedContents[0]);
-        console.log('Updated selected content due to status/video change');
-      }
+      setSelectedContent(sortedContents[0]);
     }
   }, [contents, selectedContent]);
   
@@ -123,29 +93,7 @@ export default function Dashboard() {
             </div>
             {selectedContent && (
               <div>
-                {selectedContent.status === 'processing' && (
-                  <span className="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-1 rounded flex items-center">
-                    <span className="animate-spin h-3 w-3 border-b-2 border-yellow-800 rounded-full mr-1"></span>
-                    Processing...
-                  </span>
-                )}
-                {selectedContent.status === 'error' && (
-                  <span className="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded flex items-center">
-                    <i className="ri-error-warning-line mr-1"></i>
-                    Error
-                  </span>
-                )}
-                {selectedContent.status === 'completed' && (
-                  <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded flex items-center">
-                    <i className="ri-check-line mr-1"></i>
-                    Ready to Export
-                  </span>
-                )}
-                {(!selectedContent.status || !['processing', 'error', 'completed'].includes(selectedContent.status)) && (
-                  <span className="bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded">
-                    Draft
-                  </span>
-                )}
+                <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-1 rounded">Ready to Export</span>
               </div>
             )}
           </div>

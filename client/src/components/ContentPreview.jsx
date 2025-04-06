@@ -1,7 +1,6 @@
 import React from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { SubjectIcons } from '../lib/icons';
-import ContentVideo from './ContentVideo';
 
 export default function ContentPreview({ content }) {
   const { toast } = useToast();
@@ -116,34 +115,8 @@ export default function ContentPreview({ content }) {
             {subjectIcon.icon}
           </div>
           <div className="ml-3">
-            <div className="flex items-center">
-              <h3 className="font-medium text-gray-800">{subjectIcon.name}: {content.title}</h3>
-              {content.status && (
-                <span className={`ml-2 text-xs px-2 py-0.5 rounded-full font-medium ${
-                  content.status === 'completed' 
-                    ? 'bg-green-100 text-green-800' 
-                    : content.status === 'processing'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : content.status === 'error'
-                    ? 'bg-red-100 text-red-800'
-                    : 'bg-gray-100 text-gray-800'
-                }`}>
-                  {content.status === 'processing' && (
-                    <><i className="ri-loader-4-line mr-1 animate-spin"></i>Processing</>
-                  )}
-                  {content.status === 'completed' && (
-                    <><i className="ri-check-line mr-1"></i>Completed</>
-                  )}
-                  {content.status === 'error' && (
-                    <><i className="ri-error-warning-line mr-1"></i>Error</>
-                  )}
-                  {!['processing', 'completed', 'error'].includes(content.status) && 
-                    content.status.charAt(0).toUpperCase() + content.status.slice(1)
-                  }
-                </span>
-              )}
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
+            <h3 className="font-medium text-gray-800">{subjectIcon.name}: {content.title}</h3>
+            <div className="flex items-center gap-2">
               <p className="text-xs text-gray-500">
                 Age Group: {content.ageGroup} • Difficulty: {content.difficultyLevel} • Duration: {content.duration}
               </p>
@@ -169,9 +142,6 @@ export default function ContentPreview({ content }) {
         </div>
         
         <div className="border-t border-gray-200 pt-3">
-          {/* Video component */}
-          <ContentVideo content={content} />
-
           <h4 className="text-sm font-medium text-gray-700 mb-2">Script Overview</h4>
           <div className="bg-white border border-gray-200 rounded-md p-3 mb-3 text-sm text-gray-600 max-h-64 overflow-y-auto">
             {!content.scriptContent ? (
@@ -184,9 +154,7 @@ export default function ContentPreview({ content }) {
                 {content.scriptContent.opening && (
                   <div className="mb-4">
                     <h5 className="font-medium mb-1">Opening:</h5>
-                    <p className="whitespace-pre-line">{typeof content.scriptContent.opening === 'string' 
-                ? content.scriptContent.opening 
-                : JSON.stringify(content.scriptContent.opening)}</p>
+                    <p className="whitespace-pre-line">{content.scriptContent.opening}</p>
                   </div>
                 )}
                 
@@ -196,24 +164,12 @@ export default function ContentPreview({ content }) {
                     <h5 className="font-medium mb-1">Main Content:</h5>
                     {content.scriptContent.mainContent.map((section, index) => (
                       <div key={index} className="mb-3 pl-3 border-l-2 border-gray-200">
-                        <h6 className="font-medium text-gray-700">{
-                          typeof section.sectionTitle === 'string' 
-                            ? section.sectionTitle 
-                            : JSON.stringify(section.sectionTitle)
-                        }</h6>
-                        <p className="whitespace-pre-line mb-2">{
-                          typeof section.script === 'string' 
-                            ? section.script 
-                            : JSON.stringify(section.script)
-                        }</p>
+                        <h6 className="font-medium text-gray-700">{section.sectionTitle}</h6>
+                        <p className="whitespace-pre-line mb-2">{section.script}</p>
                         {section.interactiveElement && (
                           <div className="bg-blue-50 p-2 rounded border border-blue-100">
                             <span className="text-xs font-medium text-blue-800">Interactive Element: </span>
-                            <span className="text-xs text-blue-700">{
-                              typeof section.interactiveElement === 'string' 
-                                ? section.interactiveElement 
-                                : JSON.stringify(section.interactiveElement)
-                            }</span>
+                            <span className="text-xs text-blue-700">{section.interactiveElement}</span>
                           </div>
                         )}
                       </div>
@@ -230,11 +186,7 @@ export default function ContentPreview({ content }) {
                 {content.scriptContent.conclusion && (
                   <div>
                     <h5 className="font-medium mb-1">Conclusion:</h5>
-                    <p className="whitespace-pre-line">{
-                      typeof content.scriptContent.conclusion === 'string' 
-                        ? content.scriptContent.conclusion 
-                        : JSON.stringify(content.scriptContent.conclusion)
-                    }</p>
+                    <p className="whitespace-pre-line">{content.scriptContent.conclusion}</p>
                   </div>
                 )}
               </div>
@@ -270,11 +222,7 @@ export default function ContentPreview({ content }) {
                       <i className="ri-image-line text-2xl text-gray-400"></i>
                     </div>
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 p-1">
-                      <p className="text-xs text-white">{
-                        typeof reference.title === 'string' 
-                          ? reference.title 
-                          : JSON.stringify(reference.title)
-                      }</p>
+                      <p className="text-xs text-white">{reference.title}</p>
                     </div>
                   </div>
                 ))}
